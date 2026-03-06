@@ -166,6 +166,25 @@ Copy the built `.jar` into the `mods/` folder and launch Minecraft using the Neo
 
 ---
 
+## Working with IntelliJ and an External Editor
+
+When files are changed outside of IntelliJ (by Claude Code, a text editor, or git), IntelliJ may or may not pick up the changes automatically depending on what was changed.
+
+### What refreshes automatically
+Edits to existing `.java` files and JSON/TOML resource files are generally detected when you switch back to the IntelliJ window. No action needed.
+
+### What needs a manual refresh
+
+**New files or folders** — IntelliJ may not notice them until you force a sync:
+- Press `Ctrl+Alt+Y` (Windows/Linux) or `Cmd+Alt+Y` (macOS), or
+- Go to **File → Synchronize**
+
+**Changes to `gradle.properties` or `build.gradle`** — IntelliJ will show a popup at the top of the editor asking to reload the Gradle project. Always click **Load Gradle Changes** when you see this. If you miss it, you can reload manually from the Gradle panel on the right side (click the refresh icon).
+
+Skipping the Gradle reload after a `gradle.properties` change is a common source of confusing errors — the code looks right but the build is using stale settings.
+
+---
+
 ## Collaborating with Git
 
 Both collaborators should clone this repository:

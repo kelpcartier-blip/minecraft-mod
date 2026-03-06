@@ -16,6 +16,12 @@ This repo exists for two goals that are equally important:
 - If something in AGENTS.md or README.md turns out to be wrong, outdated, or misleading — whether discovered through a runtime error, a failed setup step, or noticing the game/tooling has changed — update the relevant file as part of fixing the issue. Don't wait to be asked.
 - The user's son is unlikely to think to flag documentation as needing updates. Treat doc maintenance as part of the job whenever new information surfaces.
 
+**IntelliJ refresh after changes:**
+After making any change to the codebase, always tell the user what (if any) refresh action is needed in IntelliJ:
+- Edits to existing `.java` or JSON/TOML files: no action needed — IntelliJ picks these up automatically on focus.
+- New files or folders added: tell the user to press `Ctrl+Alt+Y` / `Cmd+Alt+Y` (File → Synchronize) to force IntelliJ to notice them.
+- Changes to `gradle.properties` or `build.gradle`: tell the user to click **Load Gradle Changes** in the IntelliJ popup, or use the refresh icon in the Gradle panel. This is the most important one — missing it causes confusing stale-build errors.
+
 **Version control:**
 - Commit changes to the local repository regularly — after completing a feature, fixing a bug, or making meaningful doc updates. Don't let work pile up uncommitted.
 - This repo will eventually live on GitHub. After major changes (new feature working end-to-end, significant bug fixed, big doc update) suggest that the user push so the work is backed up and shared.
