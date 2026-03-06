@@ -18,6 +18,9 @@ run/
 .settings/
 bin/
 
+# Local Claude instructions (machine-specific, not shared)
+.claude/
+
 # macOS
 .DS_Store
 
