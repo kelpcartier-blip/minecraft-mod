@@ -26,7 +26,8 @@ The best free IDE for Java and mod development.
 For sharing code between collaborators.
 
 - Download from: https://git-scm.com/
-- After installing, set your name and email in a terminal:
+- On **Windows**, the Git installer includes **Git Bash** — a terminal that understands Linux-style commands. Use Git Bash for all terminal commands in this guide.
+- After installing, open a terminal (Git Bash on Windows, any terminal on Linux) and set your name and email:
   ```
   git config --global user.name "Your Name"
   git config --global user.email "your@email.com"
@@ -58,27 +59,34 @@ Look for the repo named `MDK-<version>-ModDevGradle` — for example, `MDK-1.21.
 
 ### Step 2 — Clone the MDK into a new folder
 
-Open a terminal in this repository's root folder and run:
+Open a terminal in this repository's root folder. On Windows, right-click the folder in File Explorer and choose **Open Git Bash here**.
 
+**Linux:**
 ```bash
 git clone https://github.com/NeoForgeMDKs/MDK-1.21.1-ModDevGradle my-mod-name
 rm -rf my-mod-name/.git
 ```
 
+**Windows (Git Bash):**
+```bash
+git clone https://github.com/NeoForgeMDKs/MDK-1.21.1-ModDevGradle my-mod-name
+rm -rf my-mod-name/.git
+```
+
+> Git Bash on Windows uses the same commands as Linux, so the clone and `rm -rf` commands are identical in Git Bash. If you're using Command Prompt or PowerShell instead, use `rmdir /s /q my-mod-name\.git` in place of `rm -rf`.
+
 Replace `MDK-1.21.1-ModDevGradle` with the version you chose, and `my-mod-name` with a short name for your mod (lowercase, hyphens ok — e.g. `cool-sword`).
 
-> The `rm -rf .git` step removes the MDK's own git history so your new mod folder becomes part of this repo instead of a separate repo.
->
-> On Windows, use `rmdir /s /q my-mod-name\.git` instead of `rm -rf`.
+The `rm -rf .git` step removes the MDK's own git history so your new mod folder becomes part of this repo instead of a separate repo.
 
-### Step 2 — Open the mod folder in IntelliJ
+### Step 3 — Open the mod folder in IntelliJ
 
 - Open IntelliJ IDEA
 - Choose **File → Open** and select your new mod's folder (e.g. `cool-sword/`) — not the root of this repo
 - IntelliJ will detect it as a Gradle project and ask to import it — say yes
 - It will now download Minecraft, NeoForge, and all dependencies. **This takes a while the first time** (10–30 minutes). Let it finish before doing anything else.
 
-### Step 3 — Configure your mod
+### Step 4 — Configure your mod
 
 All the basic settings for your mod are in one file: `gradle.properties`.
 
@@ -99,20 +107,20 @@ Rules for `mod_id`:
 
 > The `mod_id` you set here will automatically be filled into the mod metadata and should also match the string in your `@Mod(...)` annotation in the Java source.
 
-### Step 4 — Rename the example source files
+### Step 5 — Rename the example source files
 
 The MDK comes with example code under `src/main/java/com/example/examplemod/`. You'll want to replace this with your own package and class names.
 
 The `example/` folder in this repo has a simplified version to use as a starting point. See `example/README.md` for a full checklist.
 
-### Step 5 — Generate run configurations
+### Step 6 — Generate run configurations
 
 In IntelliJ, on the right side, open the **Gradle** panel.
 Navigate to: `Tasks → forgegradle runs → genIntellijRuns` and double-click it.
 
 This creates the `runClient` and `runServer` launch configurations.
 
-### Step 6 — Run it
+### Step 7 — Run it
 
 - In the top toolbar, select the `runClient` configuration
 - Click the green **Play** button
@@ -127,13 +135,19 @@ Once your mod works in the development environment, build it into a `.jar` to in
 
 ### Step 1 — Build the jar
 
-In the terminal, inside your mod's folder:
+Open a terminal inside your mod's folder and run:
 
+**Linux:**
 ```bash
 ./gradlew build
 ```
 
-On Windows:
+**Windows (Git Bash):**
+```bash
+./gradlew build
+```
+
+**Windows (Command Prompt or PowerShell):**
 ```
 gradlew.bat build
 ```
@@ -150,7 +164,6 @@ If two jars appear, use the one **without** `-sources` in the name.
 | OS | Path |
 |---|---|
 | Windows | `%AppData%\.minecraft\mods\` |
-| macOS | `~/Library/Application Support/minecraft/mods/` |
 | Linux | `~/.minecraft/mods/` |
 
 If you use a launcher like CurseForge or Prism Launcher, each profile has its own folder — check the launcher's settings to find it.
@@ -187,7 +200,7 @@ Skipping the Gradle reload after a `gradle.properties` change is a common source
 
 ## Collaborating with Git
 
-Both collaborators should clone this repository:
+Both collaborators should clone this repository. On Windows, open Git Bash in the folder where you want to put the project (right-click → **Open Git Bash here**).
 
 ```bash
 git clone <repo-url>
@@ -195,6 +208,8 @@ cd minecraft_mod
 ```
 
 ### Basic workflow
+
+The following commands work the same on Linux and in Git Bash on Windows:
 
 ```bash
 # Before starting work, pull the latest changes
@@ -229,7 +244,7 @@ The `.gitignore` in this repo already excludes:
 minecraft_mod/
   README.md             ← you are here
   .gitignore
-  example/             ← reference code for starting a new mod
+  example/              ← reference code for starting a new mod
   cool-sword/           ← example mod folder (one per mod)
     gradle.properties   ← mod settings (name, id, version)
     build.gradle        ← build configuration (rarely need to touch)
