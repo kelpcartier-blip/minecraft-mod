@@ -113,19 +113,14 @@ The MDK comes with example code under `src/main/java/com/example/examplemod/`. Y
 
 The `example/` folder in this repo has a simplified version to use as a starting point. See `example/README.md` for a full checklist.
 
-### Step 6 — Generate run configurations
+### Step 6 — Run it
 
 In IntelliJ, on the right side, open the **Gradle** panel.
-Navigate to: `Tasks → forgegradle runs → genIntellijRuns` and double-click it.
+Navigate to: `Tasks → mod development → runClient` and double-click it.
 
-This creates the `runClient` and `runServer` launch configurations.
+Minecraft will launch with your mod loaded. Check the console at the bottom of IntelliJ for log output from your mod.
 
-### Step 7 — Run it
-
-- In the top toolbar, select the `runClient` configuration
-- Click the green **Play** button
-- Minecraft will launch with your mod loaded
-- Check the console at the bottom of IntelliJ for log output from your mod
+> **Note:** ModDevGradle (used by MDK 1.21.1 and newer) does not have a `genIntellijRuns` task. Run configs are available directly — just use `runClient` from the Gradle panel.
 
 ---
 
