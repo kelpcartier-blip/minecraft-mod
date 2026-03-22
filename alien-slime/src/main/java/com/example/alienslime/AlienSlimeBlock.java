@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -68,5 +69,17 @@ public class AlienSlimeBlock extends Block {
             }
         }
         return false;
+    }
+
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos,
+                                Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        if (!level.isClientSide()) {
+            // safe to modify the world here
+            BlockState neighborState = level.getBlockState(neighborPos);
+            if (neighborState.is(Blocks.LAVA) || neighborState.is(Blocks.FIRE)) {
+                level.removeBlock(pos, false);
+            }
+        }
     }
 }
