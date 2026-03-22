@@ -314,11 +314,29 @@ public static final DeferredItem<BlockItem> MY_BLOCK_ITEM =
 | `equippable(slot)` | Which equipment slot |
 
 ### Adding to creative tabs
+
+**Option 1 — instance method registered in the constructor** (simpler, works well in 21.1.x):
 ```java
-@SubscribeEvent
-public static void buildContents(BuildCreativeModeTabContentsEvent event) {
-    if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-        event.accept(MyItems.MY_ITEM.get());
+// In your mod constructor:
+modEventBus.addListener(this::addCreative);
+
+// Elsewhere in the class:
+private void addCreative(BuildCreativeModeTabContentsEvent event) {
+    if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+        event.accept(ModBlocks.MY_BLOCK_ITEM);
+    }
+}
+```
+
+**Option 2 — static method with `@SubscribeEvent`** (useful if your event handlers are in a separate class):
+```java
+@EventBusSubscriber(modid = MyMod.MODID, bus = EventBusSubscriber.Bus.MOD)
+public class MyModEvents {
+    @SubscribeEvent
+    public static void buildContents(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(MyItems.MY_ITEM.get());
+        }
     }
 }
 ```
