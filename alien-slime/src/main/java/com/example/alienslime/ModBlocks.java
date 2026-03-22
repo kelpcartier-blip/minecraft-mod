@@ -31,7 +31,6 @@ public class ModBlocks {
                 .destroyTime(0.3f)              // easy to mine — softer than stone
                 .explosionResistance(1.0f)
                 .sound(SoundType.SLIME_BLOCK)   // satisfying squelch
-                .randomTicks()                  // tells Minecraft to call randomTick() on this block
                 .noLootTable()                  // it's destroyed not dropped
         );
 

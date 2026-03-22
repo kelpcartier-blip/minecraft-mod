@@ -12,16 +12,17 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class AlienSlimeBlock extends Block {
 
-    // How many spread attempts to make per random tick.
-    // Higher = faster growth. Tune this to taste.
-    private static final int SPREAD_ATTEMPTS = 4;
+    // How many ticks to wait before checking for growth.
+    // Higher = slower growth. Tune this to taste.
+    private static final int TICK_INTERVAL = 20;
+    private static final int GROWTH_CHANCE = 5; // 1 / GROWTH_CHANCE for a slime block to spread
 
     public AlienSlimeBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
     @Override
-    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 
         // Step 1: If lava or fire is adjacent, destroy this block and stop.
         for (Direction dir : Direction.values()) {
@@ -31,9 +32,7 @@ public class AlienSlimeBlock extends Block {
                 return;
             }
         }
-
-        for (int i = 0; i < SPREAD_ATTEMPTS; i++) {
-
+        if (random.nextInt(GROWTH_CHANCE) == 0) {
             // Step 2: Pick a random primary direction to try spreading into.
             Direction growDir = Direction.values()[random.nextInt(6)];
             BlockPos target = pos.relative(growDir);
@@ -54,6 +53,9 @@ public class AlienSlimeBlock extends Block {
                 }
             }
         }
+
+        level.scheduleTick(pos, this, TICK_INTERVAL);
+
     }
 
     // Helper method: returns true if the slime can spread directly to the given position.
@@ -80,6 +82,14 @@ public class AlienSlimeBlock extends Block {
             if (neighborState.is(Blocks.LAVA) || neighborState.is(Blocks.FIRE)) {
                 level.removeBlock(pos, false);
             }
+        }
+    }
+
+    @Override
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        if (!level.isClientSide()) {
+            // safe to modify the world here
+            level.scheduleTick(pos, this, TICK_INTERVAL);
         }
     }
 }
