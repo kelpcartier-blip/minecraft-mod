@@ -44,6 +44,13 @@ public class AlienSlimeBlock extends Block {
             } else if (level.getBlockState(target).isSolid()
                     && !level.getBlockState(target).is(ModBlocks.ALIEN_SLIME_BLOCK.get())) {
 
+                // reduce the chance of spreading around a scarred alien slime block
+                if (level.getBlockState(target).is(ModBlocks.SCARRED_ALIEN_SLIME_BLOCK.get())) {
+                    if (!(random.nextInt(GROWTH_CHANCE) == 0)) {
+                        return;
+                    }
+                }
+
                 // The primary direction hit a solid non-slime block — that's a corner.
                 Direction cornerDir = Direction.values()[random.nextInt(6)];
                 BlockPos cornerTarget = target.relative(cornerDir);

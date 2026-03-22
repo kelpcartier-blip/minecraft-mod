@@ -39,4 +39,18 @@ public class ModBlocks {
     // the two together automatically.
     public static final DeferredItem<BlockItem> ALIEN_SLIME_BLOCK_ITEM =
         ITEMS.registerSimpleBlockItem("alien_slime_block", ALIEN_SLIME_BLOCK);
+
+    // The scarred variant. It doesn't spread on its own, but it converts adjacent
+    // alien_slime_blocks into more scarred blocks on each tick.
+    public static final DeferredBlock<ScarredAlienSlimeBlock> SCARRED_ALIEN_SLIME_BLOCK =
+        BLOCKS.registerBlock("scarred_alien_slime_block", ScarredAlienSlimeBlock::new,
+            BlockBehaviour.Properties.of()
+                .destroyTime(0.3f)
+                .explosionResistance(1.0f)
+                .sound(SoundType.SLIME_BLOCK)
+                .noLootTable()
+        );
+
+    public static final DeferredItem<BlockItem> SCARRED_ALIEN_SLIME_BLOCK_ITEM =
+        ITEMS.registerSimpleBlockItem("scarred_alien_slime_block", SCARRED_ALIEN_SLIME_BLOCK);
 }

@@ -40,6 +40,7 @@ public class AlienSlimeMod {
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
             event.accept(ModBlocks.ALIEN_SLIME_BLOCK_ITEM);
+            event.accept(ModBlocks.SCARRED_ALIEN_SLIME_BLOCK_ITEM);
         }
     }
 }
