@@ -189,24 +189,37 @@ Docs: https://docs.neoforged.net/docs/concepts/sides
 ### Key facts
 - There is **one block instance** in the entire game. The world stores references to it. Never instantiate blocks outside of registration.
 - Block properties (hardness, sound, light) are set via `BlockBehaviour.Properties.of()`.
-- `setId()` on properties is **mandatory** — omitting it throws an exception.
 - Blocks in inventories are actually `BlockItem` instances — a separate registration.
 - For a "few hundred" variant states: use **blockstates**. For infinite/complex data (inventories): use a **BlockEntity**.
 
 ### Registration pattern
+
+For a plain `Block` with no custom class:
 ```java
 public static final DeferredRegister.Blocks BLOCKS =
     DeferredRegister.createBlocks(ExampleMod.MODID);
 
 public static final DeferredBlock<Block> MY_BLOCK =
-    BLOCKS.register("my_block", registryName -> new Block(
+    BLOCKS.registerSimpleBlock("my_block",
         BlockBehaviour.Properties.of()
-            .setId(ResourceKey.create(Registries.BLOCK, registryName))
             .destroyTime(2.0f)
             .explosionResistance(10.0f)
             .sound(SoundType.STONE)
-    ));
+    );
 ```
+
+For a **custom block class** (e.g. `MyBlock extends Block`), use `registerBlock` instead — it passes the properties into your constructor and handles the ID internally:
+```java
+public static final DeferredBlock<MyBlock> MY_BLOCK =
+    BLOCKS.registerBlock("my_block", MyBlock::new,
+        BlockBehaviour.Properties.of()
+            .destroyTime(2.0f)
+            .explosionResistance(10.0f)
+            .sound(SoundType.STONE)
+    );
+```
+
+> **Note:** `setId()` on `BlockBehaviour.Properties` was not present in NeoForge 21.1.x. The `registerSimpleBlock` / `registerBlock` helpers handle ID assignment automatically and are the correct approach for this version.
 
 ### Common BlockBehaviour.Properties
 | Property | What it does | Example values |
@@ -271,7 +284,7 @@ Docs: https://docs.neoforged.net/docs/blockentities/
 ### Key facts
 - Items define defaults; `ItemStack` holds the actual instance with per-stack data (components).
 - `ItemStack` is **mutable** — use `.copy()` before modifying if you need to preserve the original.
-- `setId()` on `Item.Properties` is mandatory.
+- `setId()` on `Item.Properties` is **not required in NeoForge 21.1.x** — the registration helpers handle it.
 
 ### Registration pattern
 ```java
@@ -333,10 +346,8 @@ Tools use a `ToolMaterial` to define a tier, then register item types with deleg
 
 ### Registration
 ```java
-ITEMS.register("my_pickaxe", registryName ->
-    new PickaxeItem(MY_MATERIAL, new Item.Properties()
-        .setId(ResourceKey.create(Registries.ITEM, registryName))
-    )
+ITEMS.register("my_pickaxe", () ->
+    new PickaxeItem(MY_MATERIAL, new Item.Properties())
 );
 ```
 
@@ -562,7 +573,7 @@ Docs: https://docs.neoforged.net/docs/gettingstarted/structuring
 |---|---|
 | `NoClassDefFoundError` / `ClassNotFoundException` | Client-only class loaded on server — check side separation |
 | Block replaced with air | Block instantiated outside of registration |
-| Exception mentioning `setId` | Forgot `.setId(...)` on `BlockBehaviour.Properties` or `Item.Properties` |
+| Exception mentioning `setId` | Only applies to newer NeoForge versions — use `registerBlock`/`registerSimpleBlock` helpers in 21.1.x |
 | Registry query returns null | Queried registry while registration was still in progress |
 | Cyclic ordering crash | Dependency A declared BEFORE B and B declared BEFORE A |
 | Missing translation (shows raw key) | `en_us.json` entry missing or key doesn't match |
