@@ -2,6 +2,7 @@ package com.example.alienslime;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -25,14 +26,14 @@ public class ModBlocks {
     // and returns a new instance of our block. setId() is mandatory in 1.21.1 — leaving it out
     // will throw an exception at startup.
     public static final DeferredBlock<AlienSlimeBlock> ALIEN_SLIME_BLOCK =
-        BLOCKS.register("alien_slime_block", registryName -> new AlienSlimeBlock(
+        BLOCKS.registerBlock("alien_slime_block", AlienSlimeBlock::new,
             BlockBehaviour.Properties.of()
-                .setId(ResourceKey.create(Registries.BLOCK, registryName))
                 .destroyTime(0.3f)              // easy to mine — softer than stone
                 .explosionResistance(1.0f)
                 .sound(SoundType.SLIME_BLOCK)   // satisfying squelch
                 .randomTicks()                  // tells Minecraft to call randomTick() on this block
-        ));
+                .noLootTable()                  // it's destroyed not dropped
+        );
 
     // Every placeable block also needs an item form — this is what sits in your inventory
     // and what gets placed when you right-click. registerSimpleBlockItem handles wiring
