@@ -24,7 +24,8 @@ After making any change to the codebase, always tell the user what (if any) refr
 
 **Version control:**
 - Commit changes to the local repository regularly — after completing a feature, fixing a bug, or making meaningful doc updates. Don't let work pile up uncommitted.
-- This repo will eventually live on GitHub. After major changes (new feature working end-to-end, significant bug fixed, big doc update) suggest that the user push so the work is backed up and shared.
+- The repo is on GitHub at https://github.com/kelpcartier-blip/minecraft-mod. After major changes (new feature working end-to-end, significant bug fixed, big doc update) suggest that the user push so the work is backed up and shared.
+- Use GitHub issues to track planned features and bugs. Close issues via commit message with `Closes #N` when the fix lands on main.
 
 ---
 
