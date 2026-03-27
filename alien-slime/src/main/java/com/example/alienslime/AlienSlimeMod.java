@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import net.neoforged.bus.api.IEventBus;
@@ -16,6 +18,7 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 // This annotation tells NeoForge "this class is the entry point for the mod with this ID".
 // The ID here must exactly match mod_id in gradle.properties and the entry in neoforge.mods.toml.
@@ -83,14 +86,18 @@ public class AlienSlimeMod {
             }
 
             // --- Bonus drops ---
-            // event.getDrops() is the list of ItemStacks this block will drop.
-            // We copy every stack and add the copies back, doubling the yield.
+            // event.getDrops() is the list of ItemEntity objects this block will drop.
+            // Each ItemEntity wraps an ItemStack — we get to it via .getItem().
+            // We copy every stack into a new ItemEntity and add those back, doubling the yield.
             // We collect into a separate list first because you can't add to a list
             // while you're iterating over it — that would cause a crash.
-            List<ItemStack> drops = event.getDrops();
-            List<ItemStack> copies = new ArrayList<>();
-            for (ItemStack stack : drops) {
-                copies.add(stack.copy());
+            List<ItemEntity> drops = event.getDrops();
+            List<ItemEntity> copies = new ArrayList<>();
+            for (ItemEntity entity : drops) {
+                ItemStack copy = entity.getItem().copy();
+                copies.add(new ItemEntity(level,
+                        brokenPos.getX() + 0.5, brokenPos.getY() + 0.5, brokenPos.getZ() + 0.5,
+                        copy));
             }
             drops.addAll(copies);
 
