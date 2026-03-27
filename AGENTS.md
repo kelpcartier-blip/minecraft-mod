@@ -145,6 +145,14 @@ public class MyModEvents {
 
 **Never subscribe to abstract event classes** — always use concrete subtypes. Events can be cancellable (`ICancellableEvent`), have priorities (`EventPriority`), and can be side-specific.
 
+### Useful Game Bus Events
+
+**`BlockDropsEvent`** — fires on the game event bus after a block is broken, before drops are spawned.
+- `event.getPos()` — position of the broken block
+- `event.getState()` — the block's state before it was broken (use `.getBlock()` to get the Block)
+- `event.getDrops()` — returns `List<ItemEntity>`, **not** `List<ItemStack>`. Each `ItemEntity` wraps a stack; get it with `.getItem()`. To add bonus drops, construct new `ItemEntity` objects with copied stacks.
+- Runs server-side — guard with `if (level.isClientSide()) return;`
+
 ### Mod Lifecycle Order
 
 Constructor → `@EventBusSubscriber` discovery → `FMLConstructModEvent` → registry events → `FMLCommonSetupEvent` → `FMLClientSetupEvent` / `FMLDedicatedServerSetupEvent` → `InterModComms` → `FMLLoadCompleteEvent`
@@ -526,6 +534,79 @@ Loot tables support conditions (silk touch, fortune), functions (count modifiers
 Use `noLootTable()` on block properties for blocks that should never drop anything.
 
 Docs: https://docs.neoforged.net/docs/resources/server/loottables/
+
+### Global Loot Modifiers (GLMs)
+
+GLMs let you **inject items into existing loot tables** (e.g. vanilla chests) without replacing them. This is the correct alternative to overriding vanilla loot table JSON files, which replaces the whole table and conflicts with other mods.
+
+**Three things required:**
+
+1. A Java class extending `LootModifier`:
+```java
+public class MyLootModifier extends LootModifier {
+    public static final MapCodec<MyLootModifier> CODEC =
+        RecordCodecBuilder.mapCodec(inst ->
+            LootModifier.codecStart(inst).apply(inst, MyLootModifier::new)
+        );
+
+    public MyLootModifier(LootItemCondition[] conditions) {
+        super(conditions);
+    }
+
+    @Override
+    public MapCodec<? extends IGlobalLootModifier> codec() { return CODEC; }
+
+    @Override
+    protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+        generatedLoot.add(new ItemStack(ModBlocks.MY_ITEM.get()));
+        return generatedLoot;
+    }
+}
+```
+
+2. Register the codec's `DeferredRegister` in the mod constructor:
+```java
+// In ModBlocks (or equivalent):
+public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> LOOT_MODIFIER_SERIALIZERS =
+    DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
+
+public static final Supplier<MapCodec<MyLootModifier>> MY_MODIFIER =
+    LOOT_MODIFIER_SERIALIZERS.register("my_modifier", () -> MyLootModifier.CODEC);
+
+// In AlienSlimeMod constructor:
+ModBlocks.LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
+```
+
+3. Two JSON files:
+
+**`data/neoforge/loot_modifiers/global_loot_modifiers.json`** — lists all active modifiers (`"replace": false` means append, not replace):
+```json
+{
+  "replace": false,
+  "entries": [ "mymod:my_modifier_instance" ]
+}
+```
+
+**`data/<modid>/loot_modifiers/<name>.json`** — defines one modifier instance (type + conditions):
+```json
+{
+  "type": "mymod:my_modifier",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:chests/jungle_temple"
+    },
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.5
+    }
+  ]
+}
+```
+
+Use `neoforge:loot_table_id` to target a specific chest. Multiple conditions are AND-ed — use separate JSON files (same modifier class, different conditions) to target multiple loot tables.
+
+Docs: https://docs.neoforged.net/docs/resources/server/loottables/glm/
 
 ---
 
