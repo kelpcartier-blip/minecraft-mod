@@ -1,5 +1,8 @@
 {
   "itemGroup.alienslime": "Alien Slime",
   "block.alienslime.alien_slime_block": "Alien Slime Block",
-  "block.alienslime.scarred_alien_slime_block": "Scarred Alien Slime Block"
+  "block.alienslime.scarred_alien_slime_block": "Scarred Alien Slime Block",
+  "block.alienslime.ancient_idol": "Ancient Idol",
+  "block.alienslime.ancient_idol.tooltip1": "Greatly increases the yield of nearby crops.",
+  "block.alienslime.ancient_idol.tooltip2": "Legend warns of a curse."
 }
